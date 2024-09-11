@@ -24,19 +24,19 @@ class Console(object):
         os.system('cls' if os.name == 'nt' else 'clear')
 
     def success(self, msg: str) -> None:
-        print(f'{self.colors.get("cyan")}[{self.colors.get("white")}{self.time()}{self.colors.get("cyan")}] {self.colors.get("green")}[SUCC{self.colors.get("green")}] {self.colors.get("white")}{msg}{self.colors.get("reset")}')
+        print(f'{self.colors.get("cyan")}[{self.colors.get("white")}{self.time()}{self.colors.get("cyan")}] {self.colors.get("green")}[PASS{self.colors.get("green")}] {self.colors.get("white")}{msg}{self.colors.get("reset")}')
 
     def error(self, msg: str) -> None:
-        print(f'{self.colors.get("cyan")}[{self.colors.get("white")}{self.time()}{self.colors.get("cyan")}] {self.colors.get("red")}[ERRO{self.colors.get("red")}] {self.colors.get("white")}{msg}{self.colors.get("reset")}')
+        print(f'{self.colors.get("cyan")}[{self.colors.get("white")}{self.time()}{self.colors.get("cyan")}] {self.colors.get("red")}[ERROR{self.colors.get("red")}] {self.colors.get("white")}{msg}{self.colors.get("reset")}')
 
     def info(self, msg: str) -> None:
-        print(f'{self.colors.get("cyan")}[{self.colors.get("white")}{self.time()}{self.colors.get("cyan")}] {self.colors.get("blue")}[INFO{self.colors.get("blue")}] {self.colors.get("white")}{msg}{self.colors.get("reset")}')
+        print(f'{self.colors.get("cyan")}[{self.colors.get("white")}{self.time()}{self.colors.get("cyan")}] {self.colors.get("blue")}[ERROR{self.colors.get("blue")}] {self.colors.get("white")}{msg}{self.colors.get("reset")}')
 
     def warning(self, msg: str) -> None:
-        print(f'{self.colors.get("cyan")}[{self.colors.get("white")}{self.time()}{self.colors.get("cyan")}] {self.colors.get("yellow")}[WARN{self.colors.get("yellow")}] {self.colors.get("white")}{msg}{self.colors.get("reset")}')
+        print(f'{self.colors.get("cyan")}[{self.colors.get("white")}{self.time()}{self.colors.get("cyan")}] {self.colors.get("yellow")}[WARNING{self.colors.get("yellow")}] {self.colors.get("white")}{msg}{self.colors.get("reset")}')
 
     def input(self, msg: str) -> str:
-        return input(f'{self.colors.get("cyan")}[{self.colors.get("white")}{self.time()}{self.colors.get("cyan")}] {self.colors.get("magenta")}[INPT{self.colors.get("magenta")}] {self.colors.get("white")}{msg}{self.colors.get("reset")}')
+        return input(f'{self.colors.get("cyan")}[{self.colors.get("white")}{self.time()}{self.colors.get("cyan")}] {self.colors.get("magenta")}[INPUT{self.colors.get("magenta")}] {self.colors.get("white")}{msg}{self.colors.get("reset")}')
     
     def title(self, msg: str) -> None:
         ctypes.windll.kernel32.SetConsoleTitleW(msg)
@@ -61,12 +61,12 @@ class Checker(object):
             self.client.proxies = {'http': f'http://{random.choice(proxies)}'}
 
             x = self.client.get(f'https://discord.com/api/v9/entitlements/gift-codes/{code}?country_code=US&with_application=false&with_subscription_plan=true')
-
+            month = x.json().get('promotion', {}).get('inbound_header_text', 'No Header Found!')
             if '"uses"' in x.text:
                 if x.json().get('uses') == 1:
                     with self.lock:
                         open(f'{self.folder_path}/used.txt', 'a+', encoding='utf-8').write(f'{promo}\n')
-                        console.error(f"Used Promo Code: {promo[:-5]}***")
+                        console.error(f"Used: {promo[:-5]}***")
                         Stats.used += 1
                         console.title(f'Promo Checker | Valid: {Stats.valid} - Used: {Stats.used} - Invalid: {Stats.invalid} - Error: {Stats.error} | @homicide1337')
                         self.lock.release()
@@ -75,7 +75,7 @@ class Checker(object):
                 elif x.json().get('uses') == 0:
                     with self.lock:
                         open(f'{self.folder_path}/valid.txt', 'a+', encoding='utf-8').write(f'{promo}\n')
-                        console.success(f"Valid Promo Code: {promo[:-5]}***")
+                        console.success(f"Valid: {promo[:-5]}***  |  {month}")
                         Stats.valid += 1
                         console.title(f'Promo Checker | Valid: {Stats.valid} - Used: {Stats.used} - Invalid: {Stats.invalid} - Error: {Stats.error} | @homicide1337')
                         self.lock.release()
@@ -84,7 +84,7 @@ class Checker(object):
                 elif x.json().get('message') == 'Unknown Gift Code':
                     with self.lock:
                         open(f'{self.folder_path}/invalid.txt', 'a+', encoding='utf-8').write(f'{promo}\n')
-                        console.error(f"Invalid Promo Code: {promo[:-5]}***")
+                        console.error(f"Invalid: {promo[:-5]}***")
                         Stats.invalid += 1
                         console.title(f'Promo Checker | Valid: {Stats.valid} - Used: {Stats.used} - Invalid: {Stats.invalid} - Error: {Stats.error} | @homicide1337')
                         self.lock.release()
@@ -92,14 +92,14 @@ class Checker(object):
 
                 elif 'rate limited' in x.text.lower():
                     with self.lock:
-                        console.info(f"Rate Limited: {promo[:-5]}*** | Sleeping for {x.json().get('retry_after')}s")
+                        console.info(f"Rate Limit: {promo[:-5]}*** | Sleeping for {x.json().get('retry_after')}s")
                         self.lock.release()
                         time.sleep(x.json().get('retry_after'))
 
                 else:
                     with self.lock:
                         open(f'{self.folder_path}/error.txt', 'a+', encoding='utf-8').write(f'{promo}\n')
-                        console.error(f"Unknown Error: {promo[:-5]}*** -> {x.text}")
+                        console.error(f"Unknown: {promo[:-5]}*** -> {x.text}")
                         Stats.error += 1
                         console.title(f'Promo Checker | Valid: {Stats.valid} - Used: {Stats.used} - Invalid: {Stats.invalid} - Error: {Stats.error} | @homicide1337')
                         self.lock.release()
