@@ -68,7 +68,7 @@ class Checker(object):
                         open(f'{self.folder_path}/used.txt', 'a+', encoding='utf-8').write(f'{promo}\n')
                         console.error(f"Used: {promo[:-5]}***")
                         Stats.used += 1
-                        console.title(f'Promo Checker | Valid: {Stats.valid} - Used: {Stats.used} - Invalid: {Stats.invalid} - Error: {Stats.error} | @homicide1337')
+                        console.title(f'Promo Checker | Valid: {Stats.valid} - Used: {Stats.used} - Invalid: {Stats.invalid} - Error: {Stats.error} ')
                         self.lock.release()
                         return False
 
@@ -77,7 +77,7 @@ class Checker(object):
                         open(f'{self.folder_path}/valid.txt', 'a+', encoding='utf-8').write(f'{promo}\n')
                         console.success(f"Valid: {promo[:-5]}***  |  {month}")
                         Stats.valid += 1
-                        console.title(f'Promo Checker | Valid: {Stats.valid} - Used: {Stats.used} - Invalid: {Stats.invalid} - Error: {Stats.error} | @homicide1337')
+                        console.title(f'Promo Checker | Valid: {Stats.valid} - Used: {Stats.used} - Invalid: {Stats.invalid} - Error: {Stats.error} ')
                         self.lock.release()
                         return True
                     
@@ -101,7 +101,7 @@ class Checker(object):
                         open(f'{self.folder_path}/error.txt', 'a+', encoding='utf-8').write(f'{promo}\n')
                         console.error(f"Unknown: {promo[:-5]}*** -> {x.text}")
                         Stats.error += 1
-                        console.title(f'Promo Checker | Valid: {Stats.valid} - Used: {Stats.used} - Invalid: {Stats.invalid} - Error: {Stats.error} | @homicide1337')
+                        console.title(f'Promo Checker | Valid: {Stats.valid} - Used: {Stats.used} - Invalid: {Stats.invalid} - Error: {Stats.error} ')
                         self.lock.release()
                         return False
 
@@ -129,6 +129,6 @@ if __name__ == '__main__':
 
     promos  = open('input/promos.txt', 'r', encoding='utf-8').read().splitlines()
 
-    console.info(f"Checked {len(promos)} Promos in {time.time()-start} | Valid: {Stats.valid} - Used: {Stats.used} - Invalid: {Stats.invalid} - Error: {Stats.error} | @homicide1337")
+    console.info(f"Checked {len(promos)} Promos in {time.time()-start} | Valid: {Stats.valid} - Used: {Stats.used} - Invalid: {Stats.invalid} - Error: {Stats.error}")
 
     input()
