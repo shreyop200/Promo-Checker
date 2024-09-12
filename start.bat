@@ -13,7 +13,7 @@ IF %ERRORLEVEL% NEQ 0 (
 
 REM Install required packages
 echo Installing required packages...
-pip install colorama tls_client
+pip install colorama tls_client datetime
 
 REM Check if installation was successful
 IF %ERRORLEVEL% NEQ 0 (
